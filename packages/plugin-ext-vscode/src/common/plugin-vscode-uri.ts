@@ -31,8 +31,18 @@ export namespace VSCodeExtensionUri {
         }
     }
 
+    const EXTENSION_IDENTIFIER_WITH_VERSION_REGEX = /^([^.]+\..+)@((prerelease)|(\d+\.\d+\.\d+(-.*)?))$/;
+
+    export function getIdAndVersion(id: string): [string, string | undefined] {
+        const matches = EXTENSION_IDENTIFIER_WITH_VERSION_REGEX.exec(id);
+        if (matches && matches[1]) {
+            return [matches[1], matches[2]];
+        }
+        return [id, undefined];
+    }
+
     export function fromVersionedId(versionedId: string): URI {
-        const versionAndId = versionedId.split('@');
+        const versionAndId = getIdAndVersion(versionedId);
         return fromId(versionAndId[0], versionAndId[1]);
     }
 
